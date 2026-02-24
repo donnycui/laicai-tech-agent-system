@@ -12,14 +12,14 @@ const entryPoints = [
   },
   {
     href: '/stage-a',
-    title: 'Stage A',
+    title: 'stage-a',
     description: '体验第一代 AI Agent 核心功能与智能对话能力',
     icon: Zap,
     color: 'purple' as const,
   },
   {
     href: '/stage-b',
-    title: 'Stage B',
+    title: 'stage-b',
     description: '探索下一代 AI Agent 的高级特性与扩展功能',
     icon: Rocket,
     color: 'emerald' as const,
