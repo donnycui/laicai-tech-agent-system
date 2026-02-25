@@ -1,6 +1,7 @@
 import Navbar from '@/components/Navbar'
-import { Bot, ArrowLeft, Sparkles, MessageSquare, Brain } from 'lucide-react'
+import { ArrowLeft, Sparkles, MessageSquare, Brain } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function StageAPage() {
   return (
@@ -18,11 +19,15 @@ export default function StageAPage() {
               返回首页
             </Link>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-                <Bot className="h-6 w-6 text-purple-600" />
-              </div>
+              <Image
+                src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/jincai.png"
+                alt="进财"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">Stage A</h1>
+                <h1 className="text-3xl font-bold text-slate-900">进财</h1>
                 <p className="text-slate-600">AI Agent 第一阶段功能演示</p>
               </div>
             </div>
@@ -68,11 +73,15 @@ export default function StageAPage() {
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
             <div className="p-8 lg:p-12">
               <div className="max-w-2xl mx-auto text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-purple-100 mx-auto mb-6">
-                  <Bot className="h-10 w-10 text-purple-600" />
-                </div>
+                <Image
+                  src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/jincai.png"
+                  alt="进财"
+                  width={80}
+                  height={80}
+                  className="mx-auto mb-6 rounded-2xl"
+                />
                 <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                  Stage A 演示区域
+                  进财演示区域
                 </h2>
                 <p className="text-slate-600 mb-8 leading-relaxed">
                   这是 AI Agent 第一阶段的演示页面。在这里，您可以体验到基础的智能对话功能，

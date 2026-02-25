@@ -1,6 +1,7 @@
 import Navbar from '@/components/Navbar'
-import { Rocket, ArrowLeft, Wand2, Workflow, Layers } from 'lucide-react'
+import { ArrowLeft, Wand2, Workflow, Layers, Rocket } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function StageBPage() {
   return (
@@ -18,11 +19,15 @@ export default function StageBPage() {
               返回首页
             </Link>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100">
-                <Rocket className="h-6 w-6 text-emerald-600" />
-              </div>
+              <Image
+                src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/zhaocai.png"
+                alt="招财"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">Stage B</h1>
+                <h1 className="text-3xl font-bold text-slate-900">招财</h1>
                 <p className="text-slate-600">AI Agent 高级功能预览</p>
               </div>
             </div>
@@ -68,11 +73,15 @@ export default function StageBPage() {
           <div className="bg-gradient-to-br from-emerald-50 to-blue-50 rounded-2xl border border-emerald-100 overflow-hidden">
             <div className="p-8 lg:p-16">
               <div className="max-w-2xl mx-auto text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-sm mx-auto mb-6">
-                  <Rocket className="h-10 w-10 text-emerald-600" />
-                </div>
+                <Image
+                  src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/zhaocai.png"
+                  alt="招财"
+                  width={80}
+                  height={80}
+                  className="mx-auto mb-6 rounded-2xl"
+                />
                 <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                  Stage B 预览区域
+                  招财预览区域
                 </h2>
                 <p className="text-slate-600 mb-8 leading-relaxed">
                   这是 AI Agent 下一代功能的预览页面。Stage B 将带来更强大的智能创作能力、
