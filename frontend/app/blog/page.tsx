@@ -1,24 +1,11 @@
-export const dynamic = 'force-dynamic'
-
 import { getAllPosts } from '@/lib/posts'
-import BlogTabs from './components/BlogTabs'
-import BlogViewToggle from './components/BlogViewToggle'
-import BlogGrid from './components/BlogGrid'
-import BlogList from './components/BlogList'
 import Navbar from '@/components/Navbar'
+import BlogTabs from './components/BlogTabs'
+import BlogGrid from './components/BlogGrid'
 
-export default function BlogPage({
-  searchParams,
-}: {
-  searchParams: {
-    view?: string
-    category?: string
-    source?: string
-  }
-}) {
-  const view = searchParams.view === 'list' ? 'list' : 'grid'
-  const category = searchParams.category || 'ai'
-  const source = searchParams.source || 'all'
+export default function BlogPage() {
+  // ✅ 静态默认分类
+  const category = 'ai'
 
   const posts = getAllPosts().filter(
     (p) => p.category === category
@@ -28,13 +15,11 @@ export default function BlogPage({
     <>
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 py-10">
+        {/* 分类 Tab（静态） */}
         <BlogTabs current={category} />
-        <BlogViewToggle current={view} />
 
-        {view === 'grid'
-          ? <BlogGrid posts={posts} />
-          : <BlogList posts={posts} />
-        }
+        {/* 默认 Grid 视图 */}
+        <BlogGrid posts={posts} />
       </main>
     </>
   )
