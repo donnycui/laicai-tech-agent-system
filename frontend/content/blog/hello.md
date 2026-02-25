@@ -1,12 +1,8 @@
 ---
-
-title: "Hello Blog"
-
-date: "2025-02-25"
-
-tags: \["init"]
+title: Hello Blog
+date: 2025-02-25
+tags:
 draft: false
-
 ---
 
 

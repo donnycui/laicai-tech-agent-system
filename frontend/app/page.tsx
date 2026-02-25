@@ -38,7 +38,7 @@ export default function Home() {
               {/* Badge */}
               <div className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 mb-8">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 mr-2"></span>
-                全新版本发布
+                敬请期待 - 即将发布
               </div>
 
               {/* Title */}
