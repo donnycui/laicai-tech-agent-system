@@ -4,28 +4,31 @@ import matter from 'gray-matter'
 
 const postsDirectory = path.join(process.cwd(), 'content/blog')
 
-/**
- * 统一规范 tags，确保永远是 string[]
- */
 function normalizeTags(tags: unknown): string[] {
   if (Array.isArray(tags)) return tags
   if (typeof tags === 'string') return [tags]
   return []
 }
 
-/**
- * 统一规范 images，确保永远是 string[]
- */
 function normalizeImages(images: unknown): string[] {
   if (Array.isArray(images)) return images
   if (typeof images === 'string') return [images]
   return []
 }
 
-export function getAllPosts() {
-  if (!fs.existsSync(postsDirectory)) {
-    return []
+function normalizeVideo(video: unknown) {
+  if (!video || typeof video !== 'object') return null
+  const v = video as any
+  return {
+    platform: typeof v.platform === 'string' ? v.platform : '',
+    id: typeof v.id === 'string' ? v.id : '',
+    url: typeof v.url === 'string' ? v.url : '',
+    cover: typeof v.cover === 'string' ? v.cover : '',
   }
+}
+
+export function getAllPosts() {
+  if (!fs.existsSync(postsDirectory)) return []
 
   const fileNames = fs.readdirSync(postsDirectory)
 
@@ -42,13 +45,18 @@ export function getAllPosts() {
         slug,
         title: data.title || slug,
         date: data.date || '',
+        category: data.category || 'ai',
+        source: data.source || 'human',
         tags: normalizeTags(data.tags),
         cover: data.cover || null,
         summary: data.summary || '',
         images: normalizeImages(data.images),
+        video: normalizeVideo((data as any).video),
+        draft: data.draft === true,
         content,
       }
     })
+    .filter((post) => !post.draft)
 
   return posts.sort((a, b) => (a.date < b.date ? 1 : -1))
 }
@@ -63,10 +71,14 @@ export function getPostBySlug(slug: string) {
     slug,
     title: data.title || slug,
     date: data.date || '',
+    category: data.category || 'ai',
+    source: data.source || 'human',
     tags: normalizeTags(data.tags),
     cover: data.cover || null,
     summary: data.summary || '',
     images: normalizeImages(data.images),
+    video: normalizeVideo((data as any).video),
+    draft: data.draft === true,
     content,
   }
 }
