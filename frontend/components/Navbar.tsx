@@ -7,9 +7,9 @@ import { useState } from 'react'
 
 const navItems = [
   { href: '/', label: '首页' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/stage-a', label: 'Stage A' },
-  { href: '/stage-b', label: 'Stage B' },
+  { href: '/blog', label: '心路' },
+  { href: '/stage-a', label: '进财' },
+  { href: '/stage-b', label: '招财' },
 ]
 
 export default function Navbar() {
@@ -24,7 +24,7 @@ export default function Navbar() {
           <img
             src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/logo/laicai-logo.png"
             alt="来财Logo"
-            className="h-8 w-8 object-contain"
+            className="h-10 w-10 object-contain"
           />
           <span className="text-lg font-semibold text-slate-900">来财</span>
         </Link>
@@ -37,8 +37,8 @@ export default function Navbar() {
               href={item.href}
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 pathname === item.href
-                  ? 'bg-slate-100 text-slate-900'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  ? 'bg-primary-100 text-primary-700'
+                  : 'text-slate-600 hover:bg-primary-50 hover:text-primary-700'
               }`}
             >
               {item.label}
@@ -66,8 +66,8 @@ export default function Navbar() {
                 href={item.href}
                 className={`px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   pathname === item.href
-                    ? 'bg-slate-100 text-slate-900'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-primary-100 text-primary-700'
+                    : 'text-slate-600 hover:bg-primary-50 hover:text-primary-700'
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
