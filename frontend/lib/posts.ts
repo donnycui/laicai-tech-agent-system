@@ -27,6 +27,13 @@ function normalizeVideo(video: unknown) {
   }
 }
 
+function normalizeDate(date: unknown): string {
+  if (!date) return ''
+  if (typeof date === 'string') return date
+  if (date instanceof Date) return date.toISOString().split('T')[0]
+  return ''
+}
+
 export function getAllPosts() {
   if (!fs.existsSync(postsDirectory)) return []
 
@@ -44,7 +51,7 @@ export function getAllPosts() {
       return {
         slug,
         title: data.title || slug,
-        date: data.date || '',
+        date: normalizeDate(data.date),
         category: data.category || 'ai',
         source: data.source || 'human',
         tags: normalizeTags(data.tags),
@@ -70,7 +77,7 @@ export function getPostBySlug(slug: string) {
   return {
     slug,
     title: data.title || slug,
-    date: data.date || '',
+    date: normalizeDate(data.date),
     category: data.category || 'ai',
     source: data.source || 'human',
     tags: normalizeTags(data.tags),
