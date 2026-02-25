@@ -4,7 +4,29 @@ import matter from 'gray-matter'
 
 const postsDirectory = path.join(process.cwd(), 'content/blog')
 
+/**
+ * 统一规范 tags，确保永远是 string[]
+ */
+function normalizeTags(tags: unknown): string[] {
+  if (Array.isArray(tags)) return tags
+  if (typeof tags === 'string') return [tags]
+  return []
+}
+
+/**
+ * 统一规范 images，确保永远是 string[]
+ */
+function normalizeImages(images: unknown): string[] {
+  if (Array.isArray(images)) return images
+  if (typeof images === 'string') return [images]
+  return []
+}
+
 export function getAllPosts() {
+  if (!fs.existsSync(postsDirectory)) {
+    return []
+  }
+
   const fileNames = fs.readdirSync(postsDirectory)
 
   const posts = fileNames
@@ -20,10 +42,10 @@ export function getAllPosts() {
         slug,
         title: data.title || slug,
         date: data.date || '',
-        tags: data.tags || [],
+        tags: normalizeTags(data.tags),
         cover: data.cover || null,
         summary: data.summary || '',
-        images: data.images || [],
+        images: normalizeImages(data.images),
         content,
       }
     })
@@ -41,10 +63,10 @@ export function getPostBySlug(slug: string) {
     slug,
     title: data.title || slug,
     date: data.date || '',
-    tags: data.tags || [],
+    tags: normalizeTags(data.tags),
     cover: data.cover || null,
     summary: data.summary || '',
-    images: data.images || [],
+    images: normalizeImages(data.images),
     content,
   }
 }
