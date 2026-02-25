@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getAllPosts } from '@/lib/posts'
 import BlogTabs from './components/BlogTabs'
 import BlogViewToggle from './components/BlogViewToggle'
@@ -5,11 +7,7 @@ import BlogGrid from './components/BlogGrid'
 import BlogList from './components/BlogList'
 import Navbar from '@/components/Navbar'
 
-export default function BlogPage({
-  searchParams,
-}: {
-  searchParams: { view?: string; category?: string }
-}) {
+export default function BlogPage({ searchParams }) {
   const view = searchParams.view === 'list' ? 'list' : 'grid'
   const category = searchParams.category || 'ai'
 
@@ -24,11 +22,10 @@ export default function BlogPage({
         <BlogTabs current={category} />
         <BlogViewToggle current={view} />
 
-        {view === 'grid' ? (
-          <BlogGrid posts={posts} />
-        ) : (
-          <BlogList posts={posts} />
-        )}
+        {view === 'grid'
+          ? <BlogGrid posts={posts} />
+          : <BlogList posts={posts} />
+        }
       </main>
     </>
   )
