@@ -7,9 +7,18 @@ import BlogGrid from './components/BlogGrid'
 import BlogList from './components/BlogList'
 import Navbar from '@/components/Navbar'
 
-export default function BlogPage({ searchParams }) {
+export default function BlogPage({
+  searchParams,
+}: {
+  searchParams: {
+    view?: string
+    category?: string
+    source?: string
+  }
+}) {
   const view = searchParams.view === 'list' ? 'list' : 'grid'
   const category = searchParams.category || 'ai'
+  const source = searchParams.source || 'all'
 
   const posts = getAllPosts().filter(
     (p) => p.category === category
