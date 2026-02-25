@@ -21,10 +21,12 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600">
-            <Bot className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-lg font-semibold text-slate-900">AI Agent</span>
+          <img
+            src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/logo/laicai-logo.png"
+            alt="来财Logo"
+            className="h-8 w-8 object-contain"
+          />
+          <span className="text-lg font-semibold text-slate-900">来财</span>
         </Link>
 
         {/* Desktop Navigation */}

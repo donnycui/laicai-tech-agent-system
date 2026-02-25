@@ -101,7 +101,7 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-slate-500">
-                © 2024 AI Agent. All rights reserved.
+                © 2026 laicai Agent. All rights reserved.
               </p>
               <div className="flex items-center gap-6">
                 <a href="#" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">
