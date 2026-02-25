@@ -20,13 +20,13 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 hover:scale-110 transition-transform duration-200 ease-in-out">
           <img
-            src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/logo/laicai-logo.png"
+            src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/logo/getrich-logo.png"
             alt="来财Logo"
             className="h-10 w-10 object-contain"
           />
-          <span className="text-lg font-semibold text-slate-900">来财</span>
+          <span className="text-xl font-bold text-primary-600">来财</span>
         </Link>
 
         {/* Desktop Navigation */}
