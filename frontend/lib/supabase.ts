@@ -151,7 +151,15 @@ export async function getMissionPipeline() {
 // 获取配额数据
 export async function getQuotas() {
   try {
-    // 从 ops_policies 表获取配额配置
+    // 从 daily_usage 表获取今日使用情况
+    const today = new Date().toISOString().split('T')[0]
+    
+    const { data: usageData } = await supabase
+      .from('daily_usage')
+      .select('platform, usage_count, limit, reset_at')
+      .eq('date', today)
+    
+    // 从 ops_policies 获取配额限制
     const { data: policies } = await supabase
       .from('ops_policies')
       .select('key, value')
@@ -164,23 +172,59 @@ export async function getQuotas() {
         'bilibili_daily_quota',
         'content_creation_daily_quota'
       ])
-
-    // TODO: 需要查询今日已使用数量
-    // 这里先返回默认数据
+    
+    const platformMap: Record<string, { name: string, key: string }> = {
+      'xiaohongshu': { name: '小红书', key: 'xiaohongshu_daily_quota' },
+      'video': { name: '视频号', key: 'video_daily_quota' },
+      'douyin': { name: '抖音', key: 'douyin_daily_quota' },
+      'wechat': { name: '公众号', key: 'wechat_daily_quota' },
+      'zhihu': { name: '知乎', key: 'zhihu_daily_quota' },
+      'bilibili': { name: 'B 站', key: 'bilibili_daily_quota' }
+    }
+    
+    // 构建平台配额数据
+    const platformQuotas = Object.entries(platformMap).map(([platform, info]) => {
+      const usage = usageData?.find(u => u.platform === platform)
+      const policy = policies?.find(p => p.key === info.key)
+      
+      const used = usage?.usage_count || 0
+      const limit = usage?.limit || (policy?.value?.limit as number) || 10
+      const percent = Math.round((used / limit) * 100)
+      const status = percent >= 90 ? 'critical' : percent >= 70 ? 'warning' : 'normal' as const
+      
+      return {
+        platform,
+        name: info.name,
+        used,
+        limit,
+        status
+      }
+    })
+    
+    // 内容创作配额（所有平台的总和）
+    const totalUsed = platformQuotas.reduce((sum, q) => sum + q.used, 0)
+    const totalLimit = platformQuotas.reduce((sum, q) => sum + q.limit, 0)
+    const contentPercent = Math.round((totalUsed / totalLimit) * 100)
+    
+    // 计算重置时间
+    const resetTime = usageData?.[0]?.reset_at 
+      ? (() => {
+          const reset = new Date(usageData[0].reset_at)
+          const now = new Date()
+          const diff = reset.getTime() - now.getTime()
+          const hours = Math.floor(diff / 3600000)
+          const minutes = Math.floor((diff % 3600000) / 60000)
+          return `${hours}小时${minutes}分`
+        })()
+      : '4 小时'
+    
     return {
       contentQuota: {
-        used: 12,
-        limit: 20,
-        resetTime: '4 小时 23 分'
+        used: totalUsed,
+        limit: totalLimit,
+        resetTime
       },
-      platformQuotas: [
-        { platform: 'xiaohongshu', name: '小红书', used: 8, limit: 10, status: 'warning' as const },
-        { platform: 'video', name: '视频号', used: 4, limit: 10, status: 'normal' as const },
-        { platform: 'douyin', name: '抖音', used: 5, limit: 12, status: 'normal' as const },
-        { platform: 'wechat', name: '公众号', used: 2, limit: 5, status: 'normal' as const },
-        { platform: 'zhihu', name: '知乎', used: 1, limit: 8, status: 'normal' as const },
-        { platform: 'bilibili', name: 'B 站', used: 3, limit: 10, status: 'normal' as const },
-      ]
+      platformQuotas
     }
   } catch (error) {
     console.error('Error fetching quotas:', error)
