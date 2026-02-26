@@ -25,8 +25,10 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function QuotaGauge() {
   const { data, error, isLoading } = useSWR<QuotaData>('/api/quotas', fetcher, {
-    refreshInterval: 30000, // 30 秒刷新
-    dedupingInterval: 5000
+    refreshInterval: 60000, // 60 秒刷新（节省额度）
+    dedupingInterval: 5000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true
   })
 
   if (isLoading) {

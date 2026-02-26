@@ -15,8 +15,10 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function DashboardStats() {
   const { data, error, isLoading, mutate } = useSWR<DashboardStatsData>('/api/stats', fetcher, {
-    refreshInterval: 10000, // 10 秒刷新
-    dedupingInterval: 5000
+    refreshInterval: 60000, // 60 秒刷新（节省额度）
+    dedupingInterval: 5000,
+    revalidateOnFocus: false, // 聚焦时不刷新
+    revalidateOnReconnect: true // 重连时刷新
   })
 
   if (isLoading) {

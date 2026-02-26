@@ -24,8 +24,10 @@ export default function EventStream() {
   const [autoScroll, setAutoScroll] = useState(true)
   const [filter, setFilter] = useState<string>('all')
   const { data, error, isLoading } = useSWR<Event[]>('/api/events?limit=50', fetcher, {
-    refreshInterval: 5000, // 5 秒刷新
-    dedupingInterval: 2000
+    refreshInterval: 30000, // 30 秒刷新（节省额度）
+    dedupingInterval: 2000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true
   })
 
   if (isLoading) {
