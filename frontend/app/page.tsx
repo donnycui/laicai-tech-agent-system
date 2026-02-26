@@ -1,94 +1,79 @@
-import Navbar from '@/components/Navbar'
 import EntryCard from '@/components/EntryCard'
-import { BookOpen, Zap, Rocket } from 'lucide-react'
+import Image from 'next/image'
 
 const entryPoints = [
   {
     href: '/blog',
-    title: 'Blog',
-    description: '探索 AI Agent 的最新动态、技术文章和行业洞察',
-    icon: BookOpen,
+    title: '心路',
+    description: '这是我来时的路',
+    imageUrl: undefined,
     color: 'blue' as const,
   },
   {
-    href: '/stage-a',
-    title: 'stage-a',
+    href: '/jincai',
+    title: '进财',
     description: '体验第一代 AI Agent 核心功能与智能对话能力',
-    icon: Zap,
+    imageUrl: 'https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/jincai.png',
     color: 'purple' as const,
   },
   {
-    href: '/stage-b',
-    title: 'stage-b',
+    href: '/zhaocai',
+    title: '招财',
     description: '探索下一代 AI Agent 的高级特性与扩展功能',
-    icon: Rocket,
+    imageUrl: 'https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/zhaocai.png',
     color: 'emerald' as const,
+  },
+  {
+    href: '/laicai',
+    title: '来财',
+    description: 'AI Agent 核心功能',
+    imageUrl: 'https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/laicai.png',
+    color: 'amber' as const,
   },
 ]
 
 export default function Home() {
   return (
-    <>
-      <Navbar />
-      <main>
-        {/* Hero Section */}
-        <section className="relative overflow-hidden">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-            <div className="text-center max-w-3xl mx-auto">
-              {/* Badge */}
-              <div className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 mb-8">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-500 mr-2"></span>
-                敬请期待 - 即将发布
-              </div>
-
-              {/* Title */}
-              <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl mb-6">
-                下一代 <span className="text-primary-600">AI Agent</span>
-                <br />
-                智能助手平台
+    <main>
+      {/* Hero Section */}
+      <section className="relative overflow-hidden min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+          <div className="text-center max-w-3xl mx-auto">
+            {/* Logo */}
+            <div className="flex flex-col items-center mb-4">
+              <Image
+                src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/logo/laicai_v2-1.png"
+                alt="来财"
+                width={180}
+                height={180}
+                className="mb-2"
+              />
+              <h1 className="text-6xl font-bold tracking-tight text-slate-900 mb-2" style={{ fontFamily: '"Ma Shan Zheng", cursive' }}>
+                来财
               </h1>
-
-              {/* Description */}
-              <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                基于先进的大语言模型技术，为您提供智能化的解决方案。
-                无论是内容创作、数据分析还是自动化流程，AI Agent 都能助您一臂之力。
+              <p className="text-2xl text-primary-600 font-bold tracking-wide">
+                Get Rich!
               </p>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-                <a
-                  href="/stage-a"
-                  className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-primary-600 rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
-                >
-                  开始使用
-                </a>
-                <a
-                  href="/blog"
-                  className="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
-                >
-                  了解更多
-                </a>
-              </div>
             </div>
-          </div>
 
-          {/* Background decoration */}
-          <div className="absolute inset-0 -z-10 overflow-hidden">
-            <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] opacity-30">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-purple-100 to-emerald-100 blur-3xl"></div>
+            {/* Badge */}
+            <div className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 mb-8">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500 mr-2"></span>
+              敬请期待 - 即将发布
             </div>
+
+            {/* Description */}
+            <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+              基于先进的大语言模型技术，为您提供智能化的解决方案。
+              无论是内容创作、数据分析还是自动化流程，AI Agent 都能助您一臂之力。
+            </p>
           </div>
-        </section>
+        </div>
 
         {/* Entry Points Section */}
-        <section className="py-20 bg-slate-50/50">
+        <section className="py-8 bg-slate-50/50">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl font-bold text-slate-900 mb-3">快速入口</h2>
-              <p className="text-slate-600">选择您想要探索的功能模块</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {entryPoints.map((entry) => (
                 <EntryCard key={entry.href} {...entry} />
               ))}
@@ -97,7 +82,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-slate-200 py-8">
+        <footer className="border-t border-slate-200 py-8 bg-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-slate-500">
@@ -114,7 +99,14 @@ export default function Home() {
             </div>
           </div>
         </footer>
-      </main>
-    </>
+      </section>
+
+      {/* Background decoration */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/4 w-[1200px] h-[800px] opacity-30">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-purple-100 to-amber-100 blur-3xl"></div>
+        </div>
+      </div>
+    </main>
   )
 }

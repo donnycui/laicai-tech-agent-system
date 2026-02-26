@@ -1,9 +1,8 @@
 import Navbar from '@/components/Navbar'
-import { ArrowLeft, Sparkles, MessageSquare, Brain } from 'lucide-react'
-import Link from 'next/link'
+import { Sparkles, MessageSquare, Brain } from 'lucide-react'
 import Image from 'next/image'
 
-export default function StageAPage() {
+export default function JincaiPage() {
   return (
     <>
       <Navbar />
@@ -11,13 +10,6 @@ export default function StageAPage() {
         {/* Header */}
         <div className="bg-white border-b border-slate-200">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-            <Link
-              href="/"
-              className="inline-flex items-center text-sm text-slate-500 hover:text-slate-900 transition-colors mb-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              返回首页
-            </Link>
             <div className="flex items-center gap-3">
               <Image
                 src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/misc/jincai.png"

@@ -1,12 +1,13 @@
 import Link from 'next/link'
-import { LucideIcon, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
+import { BookOpen } from 'lucide-react'
 
 interface EntryCardProps {
   href: string
   title: string
   description: string
-  icon: LucideIcon
-  color: 'blue' | 'purple' | 'emerald'
+  imageUrl?: string
+  color: 'blue' | 'purple' | 'emerald' | 'amber'
 }
 
 const colorVariants = {
@@ -28,25 +29,39 @@ const colorVariants = {
     hoverBorder: 'hover:border-emerald-300',
     hoverShadow: 'hover:shadow-emerald-100',
   },
+  amber: {
+    iconBg: 'bg-amber-100',
+    iconColor: 'text-amber-600',
+    hoverBorder: 'hover:border-amber-300',
+    hoverShadow: 'hover:shadow-amber-100',
+  },
 }
 
-export default function EntryCard({ href, title, description, icon: Icon, color }: EntryCardProps) {
+export default function EntryCard({ href, title, description, imageUrl, color }: EntryCardProps) {
   const colors = colorVariants[color]
 
   return (
     <Link
       href={href}
-      className={`group relative flex flex-col p-6 bg-white border border-slate-200 rounded-2xl transition-all duration-200 ${colors.hoverBorder} hover:shadow-lg ${colors.hoverShadow}`}
+      className={`group relative flex flex-col items-center p-6 bg-white border border-slate-200 rounded-2xl transition-all duration-200 ${colors.hoverBorder} hover:shadow-lg ${colors.hoverShadow}`}
     >
-      <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${colors.iconBg}`}>
-        <Icon className={`h-6 w-6 ${colors.iconColor}`} />
-      </div>
+      {imageUrl ? (
+        <div className="mb-4 w-20 h-20 relative">
+          <Image
+            src={imageUrl}
+            alt={title}
+            width={80}
+            height={80}
+            className="rounded-xl object-contain"
+          />
+        </div>
+      ) : (
+        <div className={`mb-4 flex h-20 w-20 items-center justify-center rounded-xl ${colors.iconBg}`}>
+          <BookOpen className={`h-10 w-10 ${colors.iconColor}`} />
+        </div>
+      )}
       <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
-      <p className="text-sm text-slate-600 mb-4 flex-grow">{description}</p>
-      <div className="flex items-center text-sm font-medium text-slate-900 group-hover:text-primary-600 transition-colors">
-        进入页面
-        <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-      </div>
+      <p className="text-sm text-slate-600 text-center">{description}</p>
     </Link>
   )
 }

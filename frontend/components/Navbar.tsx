@@ -2,15 +2,16 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bot, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import Image from 'next/image'
 
 const navItems = [
   { href: '/', label: '首页' },
-  { href: '/gallery', label: '来财' },
   { href: '/blog', label: '心路' },
-  { href: '/stage-a', label: '进财' },
-  { href: '/stage-b', label: '招财' },
+  { href: '/jincai', label: '进财' },
+  { href: '/zhaocai', label: '招财' },
+  { href: '/laicai', label: '来财' },
 ]
 
 export default function Navbar() {
@@ -21,13 +22,16 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/gallery" className="flex items-center gap-2 hover:scale-110 transition-transform duration-200 ease-in-out">
-          <img
-            src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/logo/getrich-logo.png"
-            alt="来财Logo"
-            className="h-10 w-10 object-contain"
+        <Link href="/" className="flex items-center gap-2 hover:scale-105 transition-transform duration-200 ease-in-out">
+          <Image
+            src="https://ycjiordnqwgdnwnafzdt.supabase.co/storage/v1/object/public/assets/logo/laicai_v2.png"
+            alt="来财"
+            width={36}
+            height={36}
+            className="object-contain"
           />
-          <span className="text-xl font-bold text-primary-600">来财</span>
+          <span className="text-xl font-bold text-slate-900" style={{ fontFamily: '"Ma Shan Zheng", cursive' }}>来财</span>
+          <span className="text-sm font-bold text-primary-600 tracking-wide">Get Rich!</span>
         </Link>
 
         {/* Desktop Navigation */}
