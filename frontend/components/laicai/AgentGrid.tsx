@@ -1,6 +1,7 @@
 'use client'
 
 import { Users } from 'lucide-react'
+import useSWR from 'swr'
 
 interface Agent {
   id: string
@@ -12,11 +13,44 @@ interface Agent {
   completionRate: number
 }
 
-interface AgentGridProps {
-  agents?: Agent[]
-}
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-export default function AgentGrid({ agents }: AgentGridProps) {
+export default function AgentGrid() {
+  const { data, error, isLoading } = useSWR<Agent[]>('/api/agents', fetcher, {
+    refreshInterval: 15000, // 15 秒刷新
+    dedupingInterval: 5000
+  })
+
+  if (isLoading) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6 animate-pulse">
+        <div className="h-6 bg-slate-200 rounded w-32 mb-6" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-10 w-10 bg-slate-200 rounded-full" />
+                <div className="flex-1">
+                  <div className="h-4 bg-slate-200 rounded w-24 mb-2" />
+                  <div className="h-3 bg-slate-200 rounded w-16" />
+                </div>
+              </div>
+              <div className="h-3 bg-slate-200 rounded w-full" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
+        <div className="text-center text-slate-600">加载失败</div>
+      </div>
+    )
+  }
+
   const defaultAgents: Agent[] = [
     { id: 'minion', name: 'Minion', emoji: '💼', role: '决策官', status: 'online', currentTasks: 2, completionRate: 95 },
     { id: 'sage', name: 'Sage', emoji: '📊', role: '战略家', status: 'online', currentTasks: 1, completionRate: 98 },
@@ -26,7 +60,8 @@ export default function AgentGrid({ agents }: AgentGridProps) {
     { id: 'observer', name: 'Observer', emoji: '🔎', role: '质检员', status: 'online', currentTasks: 0, completionRate: 99 },
   ]
 
-  const data = agents || defaultAgents
+  const agents = data || defaultAgents
+  const onlineCount = agents.filter(a => a.status === 'online' || a.status === 'busy').length
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -48,8 +83,6 @@ export default function AgentGrid({ agents }: AgentGridProps) {
     }
   }
 
-  const onlineCount = data.filter(a => a.status === 'online' || a.status === 'busy').length
-
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
       <div className="flex items-center justify-between mb-6">
@@ -58,7 +91,7 @@ export default function AgentGrid({ agents }: AgentGridProps) {
           Agent 团队状态
         </h2>
         <div className="text-sm text-slate-600">
-          状态：<span className="text-emerald-600 font-medium">🟢 {onlineCount}/{data.length} 在线</span>
+          状态：<span className="text-emerald-600 font-medium">🟢 {onlineCount}/{agents.length} 在线</span>
           <button className="ml-4 text-primary-600 hover:text-primary-700 font-medium">
             查看全部 →
           </button>
@@ -66,7 +99,7 @@ export default function AgentGrid({ agents }: AgentGridProps) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data.map((agent) => (
+        {agents.map((agent) => (
           <div
             key={agent.id}
             className="bg-slate-50 rounded-xl p-4 border border-slate-200 hover:border-primary-300 hover:shadow-md transition-all cursor-pointer"

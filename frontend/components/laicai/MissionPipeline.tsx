@@ -1,6 +1,7 @@
 'use client'
 
 import { ListTodo } from 'lucide-react'
+import useSWR from 'swr'
 
 interface Mission {
   id: string
@@ -12,57 +13,62 @@ interface Mission {
   priority?: 'low' | 'medium' | 'high'
 }
 
-interface MissionPipelineProps {
-  pipeline?: {
+interface PipelineData {
+  pipeline: {
     queued: number
     approved: number
     inProgress: number
     executing: number
     completed: number
   }
-  activeMissions?: Mission[]
+  activeMissions: Mission[]
 }
 
-export default function MissionPipeline({ pipeline, activeMissions }: MissionPipelineProps) {
-  const defaultPipeline = {
-    queued: 3,
-    approved: 2,
-    inProgress: 5,
-    executing: 8,
-    completed: 24
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+export default function MissionPipeline() {
+  const { data, error, isLoading } = useSWR<PipelineData>('/api/missions', fetcher, {
+    refreshInterval: 10000, // 10 秒刷新
+    dedupingInterval: 5000
+  })
+
+  if (isLoading) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6 animate-pulse">
+        <div className="h-6 bg-slate-200 rounded w-32 mb-6" />
+        <div className="h-32 bg-slate-200 rounded mb-6" />
+        <div className="space-y-3">
+          <div className="h-20 bg-slate-200 rounded" />
+          <div className="h-20 bg-slate-200 rounded" />
+        </div>
+      </div>
+    )
   }
 
-  const defaultMissions: Mission[] = [
-    {
-      id: '1247',
-      title: '小红书内容发布 - "重疾险选购指南"',
-      status: 'executing',
-      agent: 'Xalt',
-      progress: 60,
-      startTime: '14:25'
-    },
-    {
-      id: '1246',
-      title: '视频号脚本创作 - "年金险收益分析"',
-      status: 'approved',
-      agent: 'Minion',
-      priority: 'high'
-    }
-  ]
+  if (error) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
+        <div className="text-center text-slate-600">加载失败</div>
+      </div>
+    )
+  }
 
-  const data = pipeline || defaultPipeline
-  const missions = activeMissions || defaultMissions
+  const defaultData: PipelineData = {
+    pipeline: { queued: 0, approved: 0, inProgress: 0, executing: 0, completed: 0 },
+    activeMissions: []
+  }
+
+  const { pipeline, activeMissions } = data || defaultData
+  const total = Object.values(pipeline).reduce((a, b) => a + b, 0)
+  const progressPercent = total > 0 ? Math.round((pipeline.completed / total) * 100) : 0
 
   const stages = [
-    { key: 'queued', label: '提案', count: data.queued },
-    { key: 'approved', label: '审批', count: data.approved },
-    { key: 'inProgress', label: '任务', count: data.inProgress },
-    { key: 'executing', label: '执行', count: data.executing },
-    { key: 'completed', label: '完成', count: data.completed }
+    { key: 'queued', label: '提案', count: pipeline.queued },
+    { key: 'approved', label: '审批', count: pipeline.approved },
+    { key: 'inProgress', label: '任务', count: pipeline.inProgress },
+    { key: 'executing', label: '执行', count: pipeline.executing },
+    { key: 'completed', label: '完成', count: pipeline.completed }
   ]
-
-  const total = Object.values(data).reduce((a, b) => a + b, 0)
-  const progressPercent = total > 0 ? Math.round((data.completed / total) * 100) : 0
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
@@ -72,7 +78,7 @@ export default function MissionPipeline({ pipeline, activeMissions }: MissionPip
           任务流水线
         </h2>
         <div className="text-sm text-slate-600">
-          当前任务：<span className="font-medium text-slate-900">{data.inProgress + data.executing} 进行中</span>
+          当前任务：<span className="font-medium text-slate-900">{pipeline.inProgress + pipeline.executing} 进行中</span>
           <span className="mx-2">|</span>
           配额使用：<span className="font-medium text-amber-600">🟡 {progressPercent}%</span>
         </div>
@@ -112,7 +118,7 @@ export default function MissionPipeline({ pipeline, activeMissions }: MissionPip
           🔍 当前活动任务
         </h3>
         <div className="space-y-3">
-          {missions.map((mission) => (
+          {activeMissions.slice(0, 3).map((mission) => (
             <div
               key={mission.id}
               className="bg-slate-50 rounded-xl p-4 border border-slate-200 hover:border-primary-300 transition-all cursor-pointer"
@@ -165,6 +171,12 @@ export default function MissionPipeline({ pipeline, activeMissions }: MissionPip
             </div>
           ))}
         </div>
+
+        {activeMissions.length === 0 && (
+          <div className="text-center py-8 text-slate-500">
+            暂无活动任务
+          </div>
+        )}
 
         <div className="mt-4 text-center">
           <button className="text-primary-600 hover:text-primary-700 font-medium text-sm">

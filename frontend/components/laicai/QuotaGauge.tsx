@@ -1,6 +1,7 @@
 'use client'
 
 import { Gauge, Settings } from 'lucide-react'
+import useSWR from 'swr'
 
 interface Quota {
   platform: string
@@ -11,7 +12,7 @@ interface Quota {
   status: 'normal' | 'warning' | 'critical'
 }
 
-interface QuotaGaugeProps {
+interface QuotaData {
   contentQuota?: {
     used: number
     limit: number
@@ -20,7 +21,36 @@ interface QuotaGaugeProps {
   platformQuotas?: Quota[]
 }
 
-export default function QuotaGauge({ contentQuota, platformQuotas }: QuotaGaugeProps) {
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+export default function QuotaGauge() {
+  const { data, error, isLoading } = useSWR<QuotaData>('/api/quotas', fetcher, {
+    refreshInterval: 30000, // 30 秒刷新
+    dedupingInterval: 5000
+  })
+
+  if (isLoading) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6 animate-pulse">
+        <div className="h-6 bg-slate-200 rounded w-32 mb-6" />
+        <div className="h-24 bg-slate-200 rounded mb-6" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-24 bg-slate-200 rounded" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
+        <div className="text-center text-slate-600">加载失败</div>
+      </div>
+    )
+  }
+
   const defaultContentQuota = {
     used: 12,
     limit: 20,
@@ -36,8 +66,8 @@ export default function QuotaGauge({ contentQuota, platformQuotas }: QuotaGaugeP
     { platform: 'bilibili', name: 'B 站', used: 3, limit: 10, status: 'normal' },
   ]
 
-  const content = contentQuota || defaultContentQuota
-  const platforms = platformQuotas || defaultPlatformQuotas
+  const content = data?.contentQuota || defaultContentQuota
+  const platforms = data?.platformQuotas || defaultPlatformQuotas
 
   const contentPercent = Math.round((content.used / content.limit) * 100)
   const contentStatus = contentPercent >= 90 ? 'critical' : contentPercent >= 70 ? 'warning' : 'normal'
@@ -48,15 +78,6 @@ export default function QuotaGauge({ contentQuota, platformQuotas }: QuotaGaugeP
       case 'warning': return 'text-amber-600'
       case 'normal': return 'text-emerald-600'
       default: return 'text-slate-600'
-    }
-  }
-
-  const getStatusBg = (status: string) => {
-    switch (status) {
-      case 'critical': return 'bg-red-100'
-      case 'warning': return 'bg-amber-100'
-      case 'normal': return 'bg-emerald-100'
-      default: return 'bg-slate-100'
     }
   }
 

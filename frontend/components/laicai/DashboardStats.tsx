@@ -1,27 +1,56 @@
 'use client'
 
 import { Activity, FileText, CheckCircle, Clock } from 'lucide-react'
+import useSWR from 'swr'
 
-interface DashboardStatsProps {
-  stats?: {
-    status: 'online' | 'offline' | 'warning'
-    pendingTasks: number
-    successRate: number
-    avgResponseTime: number
-    lastUpdate?: string
-  }
+interface DashboardStatsData {
+  status: 'online' | 'offline' | 'warning'
+  pendingTasks: number
+  successRate: number
+  avgResponseTime: number
+  lastUpdate: string
 }
 
-export default function DashboardStats({ stats }: DashboardStatsProps) {
-  const defaultStats = {
-    status: 'online' as const,
-    pendingTasks: 12,
-    successRate: 84,
-    avgResponseTime: 2.3,
-    lastUpdate: new Date().toISOString()
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+export default function DashboardStats() {
+  const { data, error, isLoading, mutate } = useSWR<DashboardStatsData>('/api/stats', fetcher, {
+    refreshInterval: 10000, // 10 秒刷新
+    dedupingInterval: 5000
+  })
+
+  if (isLoading) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6 animate-pulse">
+        <div className="h-6 bg-slate-200 rounded w-32 mb-6" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <div className="h-12 w-12 bg-slate-200 rounded-lg mb-3" />
+              <div className="h-8 bg-slate-200 rounded w-20 mb-2" />
+              <div className="h-4 bg-slate-200 rounded w-16" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   }
 
-  const data = stats || defaultStats
+  if (error) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
+        <div className="text-center text-slate-600">加载失败</div>
+      </div>
+    )
+  }
+
+  const stats = data || {
+    status: 'offline' as const,
+    pendingTasks: 0,
+    successRate: 0,
+    avgResponseTime: 0,
+    lastUpdate: new Date().toISOString()
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -49,8 +78,11 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
           系统运行状态
         </h2>
         <div className="text-sm text-slate-500">
-          更新时间：{new Date(data.lastUpdate!).toLocaleTimeString('zh-CN')}
-          <button className="ml-2 text-primary-600 hover:text-primary-700 font-medium">
+          更新时间：{new Date(stats.lastUpdate).toLocaleTimeString('zh-CN')}
+          <button 
+            onClick={() => mutate()}
+            className="ml-2 text-primary-600 hover:text-primary-700 font-medium"
+          >
             刷新
           </button>
         </div>
@@ -59,17 +91,17 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* 系统状态 */}
         <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-          <div className={`inline-flex h-12 w-12 items-center justify-center rounded-lg ${getStatusColor(data.status)} mb-3`}>
-            {data.status === 'online' ? (
+          <div className={`inline-flex h-12 w-12 items-center justify-center rounded-lg ${getStatusColor(stats.status)} mb-3`}>
+            {stats.status === 'online' ? (
               <CheckCircle className="h-6 w-6" />
-            ) : data.status === 'warning' ? (
+            ) : stats.status === 'warning' ? (
               <Activity className="h-6 w-6" />
             ) : (
               <Clock className="h-6 w-6" />
             )}
           </div>
           <div className="text-2xl font-bold text-slate-900 mb-1">
-            {getStatusText(data.status)}
+            {getStatusText(stats.status)}
           </div>
           <div className="text-sm text-slate-600">系统状态</div>
         </div>
@@ -80,7 +112,7 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
             <FileText className="h-6 w-6" />
           </div>
           <div className="text-2xl font-bold text-slate-900 mb-1">
-            {data.pendingTasks}
+            {stats.pendingTasks}
           </div>
           <div className="text-sm text-slate-600">待处理任务</div>
         </div>
@@ -91,7 +123,7 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
             <CheckCircle className="h-6 w-6" />
           </div>
           <div className="text-2xl font-bold text-slate-900 mb-1">
-            {data.successRate}%
+            {stats.successRate}%
           </div>
           <div className="text-sm text-slate-600">成功率</div>
         </div>
@@ -102,7 +134,7 @@ export default function DashboardStats({ stats }: DashboardStatsProps) {
             <Clock className="h-6 w-6" />
           </div>
           <div className="text-2xl font-bold text-slate-900 mb-1">
-            {data.avgResponseTime}s
+            {stats.avgResponseTime}s
           </div>
           <div className="text-sm text-slate-600">平均响应</div>
         </div>
