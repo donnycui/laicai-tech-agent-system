@@ -1,13 +1,25 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+// 创建一个Supabase客户端工厂函数，在需要时才初始化
+export function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_LAICAI_SUPABASE_URL
+  const supabaseServiceKey = process.env.LAICAI_SUPABASE_SERVICE_ROLE_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_LAICAI_SUPABASE_URL is required.')
+  }
+  if (!supabaseServiceKey) {
+    throw new Error('LAICAI_SUPABASE_SERVICE_ROLE_KEY is required.')
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey)
+}
 
 // 获取系统概览数据
 export async function getDashboardStats() {
   try {
+    const supabase = getSupabaseClient();
+
     // 获取待处理任务数
     const { count: pendingCount } = await supabase
       .from('steps')
@@ -24,8 +36,8 @@ export async function getDashboardStats() {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'completed')
 
-    const successRate = totalCount && totalCount > 0 
-      ? Math.round((completedCount! / totalCount) * 100) 
+    const successRate = totalCount && totalCount > 0
+      ? Math.round((completedCount! / totalCount) * 100)
       : 0
 
     // 获取系统状态（检查最近是否有活动）
@@ -38,7 +50,7 @@ export async function getDashboardStats() {
     const lastActivity = recentEvents?.[0]?.created_at
     const now = new Date()
     const lastActivityTime = lastActivity ? new Date(lastActivity) : null
-    const minutesSinceActivity = lastActivityTime 
+    const minutesSinceActivity = lastActivityTime
       ? Math.floor((now.getTime() - lastActivityTime.getTime()) / 60000)
       : 999
 
@@ -87,6 +99,8 @@ export async function getAgentStats() {
 // 获取任务流水线数据
 export async function getMissionPipeline() {
   try {
+    const supabase = getSupabaseClient();
+
     const { data: steps } = await supabase
       .from('steps')
       .select('status')
@@ -151,14 +165,16 @@ export async function getMissionPipeline() {
 // 获取配额数据
 export async function getQuotas() {
   try {
+    const supabase = getSupabaseClient();
+
     // 从 daily_usage 表获取今日使用情况
     const today = new Date().toISOString().split('T')[0]
-    
+
     const { data: usageData } = await supabase
       .from('daily_usage')
       .select('platform, usage_count, limit, reset_at')
       .eq('date', today)
-    
+
     // 从 ops_policies 获取配额限制
     const { data: policies } = await supabase
       .from('ops_policies')
@@ -172,7 +188,7 @@ export async function getQuotas() {
         'bilibili_daily_quota',
         'content_creation_daily_quota'
       ])
-    
+
     const platformMap: Record<string, { name: string, key: string }> = {
       'xiaohongshu': { name: '小红书', key: 'xiaohongshu_daily_quota' },
       'video': { name: '视频号', key: 'video_daily_quota' },
@@ -181,17 +197,17 @@ export async function getQuotas() {
       'zhihu': { name: '知乎', key: 'zhihu_daily_quota' },
       'bilibili': { name: 'B 站', key: 'bilibili_daily_quota' }
     }
-    
+
     // 构建平台配额数据
     const platformQuotas = Object.entries(platformMap).map(([platform, info]) => {
       const usage = usageData?.find(u => u.platform === platform)
       const policy = policies?.find(p => p.key === info.key)
-      
+
       const used = usage?.usage_count || 0
       const limit = usage?.limit || (policy?.value?.limit as number) || 10
       const percent = Math.round((used / limit) * 100)
       const status = percent >= 90 ? 'critical' : percent >= 70 ? 'warning' : 'normal' as const
-      
+
       return {
         platform,
         name: info.name,
@@ -200,14 +216,14 @@ export async function getQuotas() {
         status
       }
     })
-    
+
     // 内容创作配额（所有平台的总和）
     const totalUsed = platformQuotas.reduce((sum, q) => sum + q.used, 0)
     const totalLimit = platformQuotas.reduce((sum, q) => sum + q.limit, 0)
     const contentPercent = Math.round((totalUsed / totalLimit) * 100)
-    
+
     // 计算重置时间
-    const resetTime = usageData?.[0]?.reset_at 
+    const resetTime = usageData?.[0]?.reset_at
       ? (() => {
           const reset = new Date(usageData[0].reset_at)
           const now = new Date()
@@ -217,7 +233,7 @@ export async function getQuotas() {
           return `${hours}小时${minutes}分`
         })()
       : '4 小时'
-    
+
     return {
       contentQuota: {
         used: totalUsed,
@@ -238,6 +254,8 @@ export async function getQuotas() {
 // 获取事件日志
 export async function getEvents(limit = 20) {
   try {
+    const supabase = getSupabaseClient();
+
     const { data: events } = await supabase
       .from('events')
       .select('*')
